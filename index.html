@@ -145,19 +145,50 @@
     </div>
   </div>
 
-  <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbycycSC_iDa3rNIUPT_YBUAW8tYz-zXT5C28ozee8CfeIstGnIe1c-49b0RbywhtzFI/exec";
+<script>
+    const WEB_APP_URL = "TU_URL_DE_APPS_SCRIPT_AQUI"; // Mantené tu URL real /exec
 
     document.getElementById("formInscripcion").addEventListener("submit", async function(e) {
       e.preventDefault();
       const btn = document.getElementById("btnSubmit");
       const resDiv = document.getElementById("mensajeResultado");
 
-      btn.disabled = true;
-      btn.innerText = "Procesando inscripción...";
+      resDiv.classList.add("d-none");
+      resDiv.classList.remove("alert-danger", "alert-success", "alert-warning");
 
       const formData = new FormData(this);
       const data = Object.fromEntries(formData.entries());
+
+      // --- VALIDACIONES DE SEGURIDAD (FRONT-END) ---
+
+      // 1. Limpieza de texto
+      data.nombreCompleto = data.nombreCompleto.trim();
+      data.dni = data.dni.trim();
+      data.posicion = data.posicion.trim();
+      data.clubOrigen = data.clubOrigen.trim();
+
+      // 2. Validar DNI (7 u 8 dígitos)
+      if (!/^\d{7,8}$/.test(data.dni)) {
+        resDiv.classList.remove("d-none");
+        resDiv.classList.add("alert-danger");
+        resDiv.innerText = "Error: El DNI ingresado no es válido (debe contener 7 u 8 números).";
+        return;
+      }
+
+      // 3. Validar coincidencia de Año de Nacimiento vs Categoría Seleccionada
+      const fechaPartes = data.fechaNacimiento.split("-"); // [AAAA, MM, DD]
+      const anioIngresado = fechaPartes[0];
+
+      if (anioIngresado !== data.anioNacimiento) {
+        resDiv.classList.remove("d-none");
+        resDiv.classList.add("alert-danger");
+        resDiv.innerText = `Error: La fecha de nacimiento (${fechaPartes[2]}/${fechaPartes[1]}/${anioIngresado}) no coincide con el año de categoría seleccionado (${data.anioNacimiento}).`;
+        return;
+      }
+
+      // --- ENVÍO AL SERVIDOR ---
+      btn.disabled = true;
+      btn.innerText = "Procesando inscripción...";
 
       try {
         const response = await fetch(WEB_APP_URL, {
@@ -166,20 +197,20 @@
         });
         const result = await response.json();
 
-        resDiv.classList.remove("d-none", "alert-danger", "alert-success", "alert-warning");
+        resDiv.classList.remove("d-none");
 
         if (result.status === "success") {
           resDiv.classList.add(result.estado === "Confirmada" ? "alert-success" : "alert-warning");
-          resDiv.innerText = result.mensaje + " (Código de Registro: " + result.idRegistro + ")";
+          resDiv.innerText = `${result.mensaje} (Código: ${result.idRegistro})`;
           this.reset();
         } else {
           resDiv.classList.add("alert-danger");
-          resDiv.innerText = "Error en el servidor: " + result.message;
+          resDiv.innerText = `⚠️ ${result.message}`;
         }
       } catch (err) {
         resDiv.classList.remove("d-none");
         resDiv.classList.add("alert-danger");
-        resDiv.innerText = "Error de conexión. Verifique su acceso a internet.";
+        resDiv.innerText = "Error de conexión con el servidor. Intente nuevamente.";
       } finally {
         btn.disabled = false;
         btn.innerText = "ENVIAR INSCRIPCIÓN";
