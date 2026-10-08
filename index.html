@@ -146,7 +146,7 @@
   </div>
 
 <script>
-    const WEB_APP_URL = "TU_URL_DE_APPS_SCRIPT_AQUI"; // Mantené tu URL real /exec
+    const WEB_APP_URL = "TU_URL_DE_APPS_SCRIPT_AQUI"; // Conservá tu URL real /exec
 
     document.getElementById("formInscripcion").addEventListener("submit", async function(e) {
       e.preventDefault();
@@ -159,34 +159,70 @@
       const formData = new FormData(this);
       const data = Object.fromEntries(formData.entries());
 
-      // --- VALIDACIONES DE SEGURIDAD (FRONT-END) ---
+      // --- SANITIZACIÓN DE DATOS (TRIM) ---
+      for (let key in data) {
+        if (typeof data[key] === 'string') {
+          data[key] = data[key].trim();
+        }
+      }
 
-      // 1. Limpieza de texto
-      data.nombreCompleto = data.nombreCompleto.trim();
-      data.dni = data.dni.trim();
-      data.posicion = data.posicion.trim();
-      data.clubOrigen = data.clubOrigen.trim();
+      // --- 1. VALIDACIÓN DE CAMPOS OBLIGATORIOS ---
+      const camposRequeridos = [
+        { key: 'nombreCompleto', label: 'Nombre y Apellido' },
+        { key: 'dni', label: 'DNI' },
+        { key: 'fechaNacimiento', label: 'Fecha de Nacimiento' },
+        { key: 'anioNacimiento', label: 'Año / Categoría' },
+        { key: 'posicion', label: 'Posición de Juego' },
+        { key: 'clubOrigen', label: 'Club de Origen' },
+        { key: 'nombreTutor', label: 'Nombre del Responsable' },
+        { key: 'telefono', label: 'Teléfono de Contacto' }
+      ];
 
-      // 2. Validar DNI (7 u 8 dígitos)
+      for (let campo of camposRequeridos) {
+        if (!data[campo.key] || data[campo.key] === "") {
+          mostrarError(`El campo "${campo.label}" es obligatorio.`);
+          return;
+        }
+      }
+
+      if (!document.getElementById("aptoMedico").checked) {
+        mostrarError("Debe declarar contar con Apto Médico Vigente 2026 para continuar.");
+        return;
+      }
+
+      // --- 2. VALIDACIÓN DE NOMBRE Y APELLIDO (Mínimo 2 palabras, solo letras) ---
+      const regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ's]+(\s+[a-zA-ZáéíóúÁÉÍÓÚñÑ's]+)+$/;
+      if (!regexNombre.test(data.nombreCompleto)) {
+        mostrarError("Ingrese un Nombre y Apellido válido (mínimo nombre y apellido completos, sin números ni símbolos).");
+        return;
+      }
+
+      if (!regexNombre.test(data.nombreTutor)) {
+        mostrarError("Ingrese Nombre y Apellido completo válido para el Mayor Responsable.");
+        return;
+      }
+
+      // --- 3. VALIDACIÓN DE DNI (7 u 8 dígitos numéricos) ---
       if (!/^\d{7,8}$/.test(data.dni)) {
-        resDiv.classList.remove("d-none");
-        resDiv.classList.add("alert-danger");
-        resDiv.innerText = "Error: El DNI ingresado no es válido (debe contener 7 u 8 números).";
+        mostrarError("El DNI ingresado no es válido (debe contener 7 u 8 números, sin puntos ni espacios).");
         return;
       }
 
-      // 3. Validar coincidencia de Año de Nacimiento vs Categoría Seleccionada
+      // --- 4. VALIDACIÓN DE TELÉFONO (Mínimo 8, máximo 15 dígitos numéricos útiles) ---
+      const digitosTelefono = data.telefono.replace(/\D/g, ''); // Extrae solo números
+      if (digitosTelefono.length < 8 || digitosTelefono.length > 15) {
+        mostrarError("Ingrese un número de teléfono / WhatsApp válido con código de área (ej: 1112345678).");
+        return;
+      }
+
+      // --- 5. VALIDACIÓN FECHA vs CATEGORÍA ---
       const fechaPartes = data.fechaNacimiento.split("-"); // [AAAA, MM, DD]
-      const anioIngresado = fechaPartes[0];
-
-      if (anioIngresado !== data.anioNacimiento) {
-        resDiv.classList.remove("d-none");
-        resDiv.classList.add("alert-danger");
-        resDiv.innerText = `Error: La fecha de nacimiento (${fechaPartes[2]}/${fechaPartes[1]}/${anioIngresado}) no coincide con el año de categoría seleccionado (${data.anioNacimiento}).`;
+      if (fechaPartes[0] !== data.anioNacimiento) {
+        mostrarError(`La fecha de nacimiento (${fechaPartes[2]}/${fechaPartes[1]}/${fechaPartes[0]}) no coincide con el año de categoría seleccionado (${data.anioNacimiento}).`);
         return;
       }
 
-      // --- ENVÍO AL SERVIDOR ---
+      // --- ENVÍO DE DATOS ---
       btn.disabled = true;
       btn.innerText = "Procesando inscripción...";
 
@@ -208,12 +244,16 @@
           resDiv.innerText = `⚠️ ${result.message}`;
         }
       } catch (err) {
-        resDiv.classList.remove("d-none");
-        resDiv.classList.add("alert-danger");
-        resDiv.innerText = "Error de conexión con el servidor. Intente nuevamente.";
+        mostrarError("Error de conexión con el servidor. Verifique su red e intente nuevamente.");
       } finally {
         btn.disabled = false;
         btn.innerText = "ENVIAR INSCRIPCIÓN";
+      }
+
+      function mostrarError(mensaje) {
+        resDiv.classList.remove("d-none");
+        resDiv.classList.add("alert-danger");
+        resDiv.innerText = `⚠️ ${mensaje}`;
       }
     });
   </script>
