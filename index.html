@@ -99,7 +99,7 @@
       <h4 class="text-danger fw-bold border-bottom pb-2 mb-3">📌 Cronograma y Ubicación</h4>
       <p class="mb-1">📍 <strong>Predio:</strong> Predio Santo Domingo (Ortega 5000, Villa Domínico)</p>
       <p class="mb-3">🕒 <strong>Horario de Citación:</strong> 14:30 HS</p>
-      <p class="mb-3 text-danger">⚠️<strong>SE SUSPENDE POR LLUVIA</strong></p>
+      <p class="mb-3 text-danger fw-bold fs-5">⚠️ SE SUSPENDE POR LLUVIA</p>
 
       <div class="table-responsive">
         <table class="table table-bordered text-center align-middle">
@@ -122,7 +122,7 @@
       <div class="req-box mt-3">
         <strong>⚠️ Requisitos Obligatorios para Presentarse:</strong>
         <ul class="mb-0 mt-2 ps-3">
-          <li>Apto Médico: no más de 6 meses de vigencia (2026)</li>
+          <li>Apto Médico: no más de 6 meses de vigencia (2026).</li>
           <li>Permiso explícito de pruebas (otorgado por el club en el que está fichada actualmente).</li>
           <li>Completar este formulario online.</li>
           <li>Hidratación propia.</li>
@@ -135,24 +135,25 @@
     <div class="card card-custom p-4">
       <h4 class="fw-bold mb-3 text-secondary">Formulario de Inscripción</h4>
       
-      <form id="formInscripcion">
+      <!-- novalidate permite que JavaScript gestione todas las alertas -->
+      <form id="formInscripcion" novalidate>
         <h5 class="text-danger fs-6 fw-bold mt-2">1. DATOS DE LA JUGADORA</h5>
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Nombre y Apellido Completo *</label>
-            <input type="text" class="form-control" id="nombreCompleto" name="nombreCompleto" required>
+            <input type="text" class="form-control" id="nombreCompleto" name="nombreCompleto">
           </div>
           <div class="col-md-6">
             <label class="form-label">DNI *</label>
-            <input type="text" class="form-control" id="dni" name="dni" placeholder="Ej: 45.123.456" inputmode="numeric" required>
+            <input type="text" class="form-control" id="dni" name="dni" placeholder="Ej: 45.123.456" inputmode="numeric">
           </div>
           <div class="col-md-6">
             <label class="form-label">Fecha de Nacimiento *</label>
-            <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento" required>
+            <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento">
           </div>
           <div class="col-md-6">
             <label class="form-label">Año de Nacimiento / Categoría *</label>
-            <select class="form-select" id="anioNacimiento" name="anioNacimiento" required>
+            <select class="form-select" id="anioNacimiento" name="anioNacimiento">
               <option value="">Seleccionar año...</option>
               <option value="2008">2008</option>
               <option value="2009">2009</option>
@@ -171,15 +172,15 @@
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Posición de Juego de Preferencia *</label>
-            <input type="text" class="form-control" id="posicion" name="posicion" placeholder="Ej: arquera, defensora, mediocampo, delantera" required>
+            <input type="text" class="form-control" id="posicion" name="posicion" placeholder="Ej: arquera, defensora, mediocampo, delantera">
           </div>
           <div class="col-md-6">
             <label class="form-label">Club de Origen (o indicar 'Libre') *</label>
-            <input type="text" class="form-control" id="clubOrigen" name="clubOrigen" required>
+            <input type="text" class="form-control" id="clubOrigen" name="clubOrigen">
           </div>
           <div class="col-md-6">
             <label class="form-label">¿Cuenta con Permiso de Pruebas de su club? *</label>
-            <select class="form-select" id="permisoClub" name="permisoClub" required>
+            <select class="form-select" id="permisoClub" name="permisoClub">
               <option value="Sí">Sí</option>
               <option value="No">No</option>
               <option value="No aplica / Jugadora Libre">No aplica / Jugadora Libre</option>
@@ -187,7 +188,7 @@
           </div>
           <div class="col-md-6">
             <div class="form-check mt-4">
-              <input class="form-check-input" type="checkbox" id="aptoMedico" name="aptoMedico" required>
+              <input class="form-check-input" type="checkbox" id="aptoMedico" name="aptoMedico">
               <label class="form-check-label" for="aptoMedico">
                 Declaro contar con Apto Médico Vigente Año 2026 *
               </label>
@@ -199,11 +200,11 @@
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Nombre del Mayor Responsable *</label>
-            <input type="text" class="form-control" id="nombreTutor" name="nombreTutor" required>
+            <input type="text" class="form-control" id="nombreTutor" name="nombreTutor">
           </div>
           <div class="col-md-6">
             <label class="form-label">Teléfono / WhatsApp de Contacto *</label>
-            <input type="tel" class="form-control" id="telefono" name="telefono" placeholder="Ej: 1112345678" required>
+            <input type="tel" class="form-control" id="telefono" name="telefono" placeholder="Ej: 1112345678">
           </div>
         </div>
 
@@ -215,186 +216,19 @@
   <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbycycSC_iDa3rNIUPT_YBUAW8tYz-zXT5C28ozee8CfeIstGnIe1c-49b0RbywhtzFI/exec";
 
-    document.addEventListener("DOMContentLoaded", function() {
-      const inputDni = document.getElementById("dni");
-      const inputTel = document.getElementById("telefono");
-
-      // --- MÁSCARA EN TIEMPO REAL: DNI (Formateo automático con puntos) ---
-      if (inputDni) {
-        inputDni.addEventListener("input", function(e) {
-          let val = e.target.value.replace(/\D/g, '');
-          if (val.length > 8) val = val.slice(0, 8);
-          
-          if (val.length > 5) {
-            e.target.value = val.replace(/^(\d{1,2})(\d{3})(\d{3})$/, "$1.$2.$3");
-          } else if (val.length > 2) {
-            e.target.value = val.replace(/^(\d{1,2})(\d{3})$/, "$1.$2");
-          } else {
-            e.target.value = val;
-          }
-        });
-      }
-
-      // --- MÁSCARA EN TIEMPO REAL: Teléfono (Filtra caracteres no numéricos) ---
-      if (inputTel) {
-        inputTel.addEventListener("input", function(e) {
-          e.target.value = e.target.value.replace(/[^\d\s+]/g, '');
-        });
-      }
-    });
-
-    document.getElementById("formInscripcion").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      const btn = document.getElementById("btnSubmit");
-
-      const formData = new FormData(this);
-      const data = Object.fromEntries(formData.entries());
-
-      // --- SANITIZACIÓN DE DATOS ---
-      for (let key in data) {
-        if (typeof data[key] === 'string') {
-          data[key] = data[key].trim();
-        }
-      }
-      if (data.dni) {
-        data.dni = data.dni.replace(/\./g, '');
-      }
-
-      // --- 1. VALIDACIÓN DE CAMPOS OBLIGATORIOS ---
-      const camposRequeridos = [
-        { key: 'nombreCompleto', label: 'Nombre y Apellido' },
-        { key: 'dni', label: 'DNI' },
-        { key: 'fechaNacimiento', label: 'Fecha de Nacimiento' },
-        { key: 'anioNacimiento', label: 'Año / Categoría' },
-        { key: 'posicion', label: 'Posición de Juego' },
-        { key: 'clubOrigen', label: 'Club de Origen' },
-        { key: 'nombreTutor', label: 'Nombre del Responsable' },
-        { key: 'telefono', label: 'Teléfono de Contacto' }
-      ];
-
-      for (let campo of camposRequeridos) {
-        if (!data[campo.key] || data[campo.key] === "") {
-          mostrarAlerta("Campo Incompleto", `El campo <b>"${campo.label}"</b> es obligatorio.`, "warning");
-          return;
-        }
-      }
-
-      if (!document.getElementById("aptoMedico").checked) {
-        mostrarAlerta("Apto Médico Requerido", "Debe declarar contar con Apto Médico Vigente 2026 para continuar.", "warning");
-        return;
-      }
-
-      // --- 2. VALIDACIÓN DE NOMBRE Y APELLIDO ---
-      const regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\']+(\s+[a-zA-ZáéíóúÁÉÍÓÚñÑ\']+)+$/;
-      if (!regexNombre.test(data.nombreCompleto)) {
-        mostrarAlerta("Nombre Inválido", "Ingrese Nombre y Apellido completo válido (mínimo dos palabras, solo letras).", "error");
-        return;
-      }
-
-      if (!regexNombre.test(data.nombreTutor)) {
-        mostrarAlerta("Responsable Inválido", "Ingrese Nombre y Apellido completo válido para el Mayor Responsable.", "error");
-        return;
-      }
-
-      // --- 3. VALIDACIÓN DE DNI ---
-      if (!/^\d{7,8}$/.test(data.dni)) {
-        mostrarAlerta("DNI Inválido", "El DNI ingresado no es válido (debe contener 7 u 8 números).", "error");
-        return;
-      }
-
-      // --- 4. VALIDACIÓN DE TELÉFONO ---
-      const digitosTelefono = data.telefono.replace(/\D/g, '');
-      if (digitosTelefono.length < 8 || digitosTelefono.length > 15) {
-        mostrarAlerta("Teléfono Inválido", "Ingrese un número de teléfono / WhatsApp válido con código de área (ej: 1112345678).", "error");
-        return;
-      }
-
-      // --- 5. VALIDACIÓN FECHA vs CATEGORÍA ---
-      const fechaPartes = data.fechaNacimiento.split("-");
-      if (fechaPartes[0] !== data.anioNacimiento) {
-        mostrarAlerta("Categoría No Coincide", `La fecha de nacimiento (${fechaPartes[2]}/${fechaPartes[1]}/${fechaPartes[0]}) no coincide con el año de categoría seleccionado (${data.anioNacimiento}).`, "error");
-        return;
-      }
-
-      // --- ENVÍO DE DATOS CON POPUP DE CARGA ---
-      btn.disabled = true;
-      btn.innerText = "Procesando...";
-
-      Swal.fire({
-        title: 'Procesando inscripción',
-        text: 'Por favor aguarde un instante...',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        didOpen: () => {
-          Swal.showLoading();
-        }
-      });
-
-      try {
-        const response = await fetch(WEB_APP_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify(data)
-        });
-        
-        // Manejo robusto de la respuesta para evitar fallos silenciosos
-        const textResponse = await response.text();
-        let result;
-        
-        try {
-          result = JSON.parse(textResponse);
-        } catch (jsonError) {
-          throw new Error("El servidor no devolvió el formato esperado. Posible error de permisos en Apps Script.");
-        }
-
-        if (result.status === "success") {
-          const esConfirmada = result.estado === "Confirmada";
-
-          if (esConfirmada) {
-            lanzarConfeti();
-            Swal.fire({
-              icon: 'success',
-              title: '¡Inscripción Confirmada!',
-              html: `<p>${result.mensaje}</p><p class="mt-3 mb-0"><b>Código de Registro:</b> <span class="badge bg-danger fs-6">${result.idRegistro}</span></p>`,
-              confirmButtonColor: '#E30613',
-              confirmButtonText: 'Entendido'
-            });
-          } else {
-            Swal.fire({
-              icon: 'warning',
-              title: 'Lista de Espera',
-              html: `<p>${result.mensaje}</p><p class="mt-3 mb-0"><b>Código de Registro:</b> <span class="badge bg-secondary fs-6">${result.idRegistro}</span></p>`,
-              confirmButtonColor: '#001C43',
-              confirmButtonText: 'Entendido'
-            });
-          }
-          this.reset();
-        } else {
-          mostrarAlerta("Error de Registro", result.message || "Ocurrió un error al procesar la inscripción.", "error");
-        }
-      } catch (err) {
-        console.error("Error capturado:", err);
-        mostrarAlerta("Error de Conexión", `No se pudo conectar con el servidor. <br><small><b>Detalle:</b> ${err.message}</small>`, "error");
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "ENVIAR INSCRIPCIÓN";
-      }
-    });
-
-    // --- FUNCIONES AUXILIARES DE UI ---
+    // Función auxiliar universal para mostrar mensajes
     function mostrarAlerta(titulo, mensaje, icono) {
-      Swal.fire({
-        icon: icono,
-        title: titulo,
-        html: mensaje,
-        confirmButtonColor: '#E30613',
-        customClass: {
-          confirmButton: 'btn btn-cai px-4'
-        }
-      });
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: icono || 'info',
+          title: titulo,
+          html: mensaje,
+          confirmButtonColor: '#E30613',
+          customClass: { confirmButton: 'btn btn-cai px-4' }
+        });
+      } else {
+        alert(`${titulo}\n\n${mensaje.replace(/<[^>]*>?/gm, '')}`);
+      }
     }
 
     function lanzarConfeti() {
@@ -407,6 +241,157 @@
         });
       }
     }
+
+    // Máscaras en tiempo real
+    document.addEventListener("DOMContentLoaded", function() {
+      const inputDni = document.getElementById("dni");
+      const inputTel = document.getElementById("telefono");
+
+      if (inputDni) {
+        inputDni.addEventListener("input", function(e) {
+          let val = e.target.value.replace(/\D/g, '');
+          if (val.length > 8) val = val.slice(0, 8);
+          if (val.length > 5) {
+            e.target.value = val.replace(/^(\d{1,2})(\d{3})(\d{3})$/, "$1.$2.$3");
+          } else if (val.length > 2) {
+            e.target.value = val.replace(/^(\d{1,2})(\d{3})$/, "$1.$2");
+          } else {
+            e.target.value = val;
+          }
+        });
+      }
+
+      if (inputTel) {
+        inputTel.addEventListener("input", function(e) {
+          e.target.value = e.target.value.replace(/[^\d\s+]/g, '');
+        });
+      }
+    });
+
+    // Evento Principal de Envío
+    document.getElementById("formInscripcion").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById("btnSubmit");
+
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+
+      // Sanitización
+      for (let key in data) {
+        if (typeof data[key] === 'string') data[key] = data[key].trim();
+      }
+      
+      const dniLimpio = data.dni ? data.dni.replace(/\./g, '') : '';
+      data.dni = dniLimpio;
+
+      // --- VALIDACIONES DETALLADAS ---
+      const camposBase = [
+        { key: 'nombreCompleto', label: 'Nombre y Apellido Completo' },
+        { key: 'dni', label: 'DNI' },
+        { key: 'fechaNacimiento', label: 'Fecha de Nacimiento' },
+        { key: 'anioNacimiento', label: 'Año / Categoría' },
+        { key: 'posicion', label: 'Posición de Juego' },
+        { key: 'clubOrigen', label: 'Club de Origen' },
+        { key: 'nombreTutor', label: 'Nombre del Mayor Responsable' },
+        { key: 'telefono', label: 'Teléfono de Contacto' }
+      ];
+
+      for (let c of camposBase) {
+        if (!data[c.key] || data[c.key] === "") {
+          mostrarAlerta("Campo Incompleto", `Por favor complete el campo <b>"${c.label}"</b>.`, "warning");
+          return;
+        }
+      }
+
+      if (!document.getElementById("aptoMedico").checked) {
+        mostrarAlerta("Apto Médico Requerido", "Debe marcar la declaración de Apto Médico Vigente 2026 para continuar.", "warning");
+        return;
+      }
+
+      // Validar Nombre Jugadora (mínimo 2 palabras)
+      const palabrasNombre = data.nombreCompleto.split(/\s+/).filter(Boolean);
+      if (palabrasNombre.length < 2) {
+        mostrarAlerta("Nombre Incompleto", "Ingrese Nombre y Apellido completos de la jugadora (mínimo dos palabras).", "error");
+        return;
+      }
+
+      // Validar Nombre Tutor (mínimo 2 palabras)
+      const palabrasTutor = data.nombreTutor.split(/\s+/).filter(Boolean);
+      if (palabrasTutor.length < 2) {
+        mostrarAlerta("Responsable Incompleto", "Ingrese Nombre y Apellido completos del Mayor Responsable.", "error");
+        return;
+      }
+
+      // Validar DNI (7 u 8 dígitos)
+      if (dniLimpio.length < 7 || dniLimpio.length > 8) {
+        mostrarAlerta("DNI Inválido", "El DNI debe contener 7 u 8 números.", "error");
+        return;
+      }
+
+      // Validar Teléfono
+      const numTel = data.telefono.replace(/\D/g, '');
+      if (numTel.length < 8 || numTel.length > 15) {
+        mostrarAlerta("Teléfono Inválido", "Ingrese un número de contacto válido con código de área (ej: 1112345678).", "error");
+        return;
+      }
+
+      // Validar Coincidencia Fecha vs Categoría
+      const anioFecha = data.fechaNacimiento.split("-")[0];
+      if (anioFecha !== data.anioNacimiento) {
+        mostrarAlerta("Categoría No Coincide", `El año de la fecha de nacimiento (${anioFecha}) no coincide con la categoría seleccionada (${data.anioNacimiento}).`, "error");
+        return;
+      }
+
+      // --- ENVÍO AL SERVIDOR ---
+      btn.disabled = true;
+      btn.innerText = "Procesando...";
+
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          title: 'Procesando inscripción',
+          text: 'Enviando datos al servidor, aguarde un instante...',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          showConfirmButton: false,
+          didOpen: () => { Swal.showLoading(); }
+        });
+      }
+
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(data)
+        });
+
+        const textResponse = await response.text();
+        let result;
+
+        try {
+          result = JSON.parse(textResponse);
+        } catch (errJson) {
+          throw new Error("Respuesta no válida del servidor Google (Verifique los permisos de Apps Script).");
+        }
+
+        if (result.status === "success") {
+          if (result.estado === "Confirmada") {
+            lanzarConfeti();
+            mostrarAlerta("¡Inscripción Confirmada!", `${result.mensaje}<br><br><b>Código de Registro:</b> <span class="badge bg-danger fs-6">${result.idRegistro}</span>`, "success");
+          } else {
+            mostrarAlerta("Lista de Espera", `${result.mensaje}<br><br><b>Código de Registro:</b> <span class="badge bg-secondary fs-6">${result.idRegistro}</span>`, "warning");
+          }
+          this.reset();
+        } else {
+          mostrarAlerta("Error de Registro", result.message || "No se pudo completar el registro.", "error");
+        }
+      } catch (err) {
+        console.error("Error en submit:", err);
+        mostrarAlerta("Error de Conexión", `No se pudo conectar con el servidor.<br><br><small><b>Detalle técnico:</b> ${err.message}</small>`, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "ENVIAR INSCRIPCIÓN";
+      }
+    });
   </script>
 </body>
 </html>
