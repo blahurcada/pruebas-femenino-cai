@@ -99,7 +99,7 @@
       <h4 class="text-danger fw-bold border-bottom pb-2 mb-3">📌 Cronograma y Ubicación</h4>
       <p class="mb-1">📍 <strong>Predio:</strong> Predio Santo Domingo (Ortega 5000, Villa Domínico)</p>
       <p class="mb-3">🕒 <strong>Horario de Citación:</strong> 14:30 HS</p>
-       <p class="mb-3">⚠️<strong>SE SUSPENDE POR LLUVIA</strong></p>
+      <p class="mb-3 text-danger">⚠️<strong>SE SUSPENDE POR LLUVIA</strong></p>
 
       <div class="table-responsive">
         <table class="table table-bordered text-center align-middle">
@@ -294,3 +294,54 @@
       if (!regexNombre.test(data.nombreTutor)) {
         mostrarAlerta("Responsable Inválido", "Ingrese Nombre y Apellido completo válido para el Mayor Responsable.", "error");
         return;
+      }
+
+      // --- 3. VALIDACIÓN DE DNI ---
+      if (!/^\d{7,8}$/.test(data.dni)) {
+        mostrarAlerta("DNI Inválido", "El DNI ingresado no es válido (debe contener 7 u 8 números).", "error");
+        return;
+      }
+
+      // --- 4. VALIDACIÓN DE TELÉFONO ---
+      const digitosTelefono = data.telefono.replace(/\D/g, '');
+      if (digitosTelefono.length < 8 || digitosTelefono.length > 15) {
+        mostrarAlerta("Teléfono Inválido", "Ingrese un número de teléfono / WhatsApp válido con código de área (ej: 1112345678).", "error");
+        return;
+      }
+
+      // --- 5. VALIDACIÓN FECHA vs CATEGORÍA ---
+      const fechaPartes = data.fechaNacimiento.split("-");
+      if (fechaPartes[0] !== data.anioNacimiento) {
+        mostrarAlerta("Categoría No Coincide", `La fecha de nacimiento (${fechaPartes[2]}/${fechaPartes[1]}/${fechaPartes[0]}) no coincide con el año de categoría seleccionado (${data.anioNacimiento}).`, "error");
+        return;
+      }
+
+      // --- ENVÍO DE DATOS CON POPUP DE CARGA ---
+      btn.disabled = true;
+      btn.innerText = "Procesando...";
+
+      Swal.fire({
+        title: 'Procesando inscripción',
+        text: 'Por favor aguarde un instante...',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+
+        if (result.status === "success") {
+          const esConfirmada = result.estado === "Confirmada";
+
+          if (esConfirmada) {
+            lanzarConfeti();
+
+            Swal.fire({
